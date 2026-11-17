@@ -43,6 +43,8 @@ from the readable original `hybrid_source_dev.py`. Source, compiler, plans and t
 are untracked to keep the committed snapshot small; bundle the readable source with
 `--compress-source main.py=hybrid_source_dev.py`. No outer wrapper is added.
 
-Local replay verifies these particular six plans. It does not establish this
-hybrid's official grade, podium, rewards or final strength. Those require actual
-site results and transcript checks; v2's rating does not transfer automatically.
+The current six supplied plans freshly replayed locally in 25, 28, 19, 30, 37
+and 40 plies: 179 total, or 1021 plies to spare. This is local exact-policy
+verification, not a new official Docker/practice grade or a podium claim. Site
+results and transcript checks must establish this candidate's score and rewards.
+Offline coverage work on other scenarios is not shipped or claimed complete.
