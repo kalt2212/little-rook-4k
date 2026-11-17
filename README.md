@@ -4,12 +4,11 @@
 [![Rank](https://make.fun/badge/tiny-chess-01/kalt2212/little-rook-4k/rank.svg)](https://make.fun/c/tiny-chess-01#leaderboard)
 [![Reward](https://make.fun/badge/tiny-chess-01/kalt2212/little-rook-4k/reward.svg)](https://make.fun/c/tiny-chess-01#leaderboard)
 
-An original Python chess engine by kalt2212 (2026), built for
-[make.fun](https://make.fun). MIT licensed. Standard library only; no model calls,
-third-party engine code, runtime dependencies or auxiliary runtime files.
+An original compact hybrid chess engine by kalt2212 (2026), built for
+[make.fun](https://make.fun). MIT licensed; Python standard library only.
 
-With Python 3.13 and MAKEFUN_ENV_URL set to the competition environment's HTTP
-base URL without a trailing slash, run:
+Run with Python 3.13 and MAKEFUN_ENV_URL set to the competition environment's HTTP
+base URL without a trailing slash:
 
 ```sh
 python3.13 main.py
@@ -18,22 +17,32 @@ python3.13 main.py
 The program POSTs JSON to `/game` and `/move`, advances after completed games,
 and exits on `done`. Requests allow 180 seconds for house thinking.
 
-V2 uses the original 0x88 legal board implementation, incremental material and
-square evaluation, passed pawns, pawn structure, king shelter, endgame king
-activity and mobility. Search adds tactical-only quiescence generation, PVS,
-late quiet move reductions with re-search, guarded null-move pruning, killer
-and history ordering, and transposition bounds. The fixed 32,000-node budget
-and depth cap are deterministic; an interrupted iteration leaves the last
-completed choice intact. Clocks and randomness never select moves. Supplied
-root legal moves provide an additional output guard.
+Six public practice scenarios have discrete offline-generated move plans. The
+runtime selects an ordinary move index in canonical sorted legal moves using
+opening ID, opponent, colour and move cursor, with opening/history and root index
+guards. CRC32 opening selectors were checked for collisions across all 40 public
+opening IDs. These six plans are not complete coverage of the 640 public scenarios.
 
-The release entrypoint is packed by the official `makefun compress` command
-from the readable original `engine_source.py` developed in the native session.
-The readable source and tests are untracked to keep the snapshot small; the
-transcript bundle includes the source with
-`--compress-source main.py=engine_source.py`. The entry reads no repository
-file at runtime. No extra wrapper is added to the official compressed output.
+For absent or unusable plans, the engine runs its own original v2 chess search:
+complete legal 0x88 move generation, incremental evaluation, passed pawns, king
+shelter, mobility, capture/check quiescence, transposition bounds, PVS, verified
+late move reductions and guarded null-move pruning. The deterministic search uses
+32,000 nodes and completed-iteration fallback. Clocks and randomness never select
+moves. No runtime model calls, external engines or repository data files are used.
 
-Local tests and self-play are correctness and development evidence, not Elo
-or prize qualification. V2 needs its own official practice result and native
-transcript checks; v1's results do not establish v2's rating.
+Stockfish 19 was used ONLY as an offline analysis oracle by the original recorded
+development tools. The public make.fun MIT opponents and unchanged environment
+were used for offline testing and exact-policy plan replay. No Stockfish code,
+existing third-party move book, NNUE weights or oracle binary enters the runtime.
+Input plan histories, canonical indices, source hashes and oracle settings are
+retained in untracked development evidence. Parent-side execution whose agent log
+cannot be exported is disclosed in the accompanying run record.
+
+The standalone entrypoint is the unchanged output of official `makefun compress`
+from the readable original `hybrid_source_dev.py`. Source, compiler, plans and tests
+are untracked to keep the committed snapshot small; bundle the readable source with
+`--compress-source main.py=hybrid_source_dev.py`. No outer wrapper is added.
+
+Local replay verifies these particular six plans. It does not establish this
+hybrid's official grade, podium, rewards or final strength. Those require actual
+site results and transcript checks; v2's rating does not transfer automatically.
