@@ -4,29 +4,36 @@
 [![Rank](https://make.fun/badge/tiny-chess-01/kalt2212/little-rook-4k/rank.svg)](https://make.fun/c/tiny-chess-01#leaderboard)
 [![Reward](https://make.fun/badge/tiny-chess-01/kalt2212/little-rook-4k/reward.svg)](https://make.fun/c/tiny-chess-01#leaderboard)
 
-An original compact chess engine by kalt2212 (2026), built for
-[make.fun](https://make.fun). MIT licensed. Plain ASCII Python; no dependencies,
-compressed payloads, external engine code, model calls or auxiliary runtime files.
+An original Python chess engine by kalt2212 (2026), built for
+[make.fun](https://make.fun). MIT licensed. Standard library only; no model calls,
+third-party engine code, runtime dependencies or auxiliary runtime files.
 
-Run with Python 3.13 and the environment URL supplied by the competition:
+With Python 3.13 and MAKEFUN_ENV_URL set to the competition environment's HTTP
+base URL without a trailing slash, run:
 
 ```sh
 python3.13 main.py
 ```
 
-`MAKEFUN_ENV_URL` must be set to the environment's HTTP base URL, without a trailing
-slash. The program POSTs JSON to `/game` and `/move`, advances after each completed
-game, and exits on `done`. HTTP requests allow 180 seconds for house thinking.
+The program POSTs JSON to `/game` and `/move`, advances after completed games,
+and exits on `done`. Requests allow 180 seconds for house thinking.
 
-The engine uses a 0x88 board, complete legal move generation, incremental material
-and positional evaluation, bishop-pair and endgame king terms, iterative negamax,
-alpha-beta bounds, a transposition table, history ordering and capture/check
-quiescence. Each move has a deterministic 32,000-node budget and a depth cap;
-quiescence is bounded. Completed iterations determine the move. Supplied root
-legal moves provide an additional output guard. Neither clocks nor randomness
-select moves.
+V2 uses the original 0x88 legal board implementation, incremental material and
+square evaluation, passed pawns, pawn structure, king shelter, endgame king
+activity and mobility. Search adds tactical-only quiescence generation, PVS,
+late quiet move reductions with re-search, guarded null-move pruning, killer
+and history ordering, and transposition bounds. The fixed 32,000-node budget
+and depth cap are deterministic; an interrupted iteration leaves the last
+completed choice intact. Clocks and randomness never select moves. Supplied
+root legal moves provide an additional output guard.
 
-Development tests are deliberately untracked to keep the submitted snapshot
-small. Local correctness and timing tests do not establish Elo, practice admission
-or prize eligibility; those require the official competition results and native
-transcript checks.
+The release entrypoint is packed by the official `makefun compress` command
+from the readable original `engine_source.py` developed in the native session.
+The readable source and tests are untracked to keep the snapshot small; the
+transcript bundle includes the source with
+`--compress-source main.py=engine_source.py`. The entry reads no repository
+file at runtime. No extra wrapper is added to the official compressed output.
+
+Local tests and self-play are correctness and development evidence, not Elo
+or prize qualification. V2 needs its own official practice result and native
+transcript checks; v1's results do not establish v2's rating.
