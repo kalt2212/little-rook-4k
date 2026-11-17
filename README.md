@@ -27,7 +27,8 @@ For absent or unusable plans, the engine runs its own original v2 chess search:
 complete legal 0x88 move generation, incremental evaluation, passed pawns, king
 shelter, mobility, capture/check quiescence, transposition bounds, PVS, verified
 late move reductions and guarded null-move pruning. The deterministic search uses
-32,000 nodes and completed-iteration fallback. Clocks and randomness never select
+32,000 nodes and completed-iteration fallback. This general fallback remains weak
+against stronger opponents; the six plans do not improve uncovered scenarios. Clocks and randomness never select
 moves. No runtime model calls, external engines or repository data files are used.
 
 Stockfish 19 was used ONLY as an offline analysis oracle by the original recorded
@@ -43,8 +44,10 @@ from the readable original `hybrid_source_dev.py`. Source, compiler, plans and t
 are untracked to keep the committed snapshot small; bundle the readable source with
 `--compress-source main.py=hybrid_source_dev.py`. No outer wrapper is added.
 
-The current six supplied plans freshly replayed locally in 25, 28, 19, 30, 37
-and 40 plies: 179 total, or 1021 plies to spare. This is local exact-policy
-verification, not a new official Docker/practice grade or a podium claim. Site
-results and transcript checks must establish this candidate's score and rewards.
-Offline coverage work on other scenarios is not shipped or claimed complete.
+The entry fits the 4 KB limit. Its six plans finish in 25, 28, 19, 28, 31 and
+34 plies: 165 total. Parent-run local official Docker practice on these exact
+bytes scored 6 wins, 0 draws, 0 losses, Elo 2112 and 1035 plies to spare;
+exact replay reproduced the state hash. That performance run omitted transcripts.
+Local Node 24 differs from server Node 26. Site authorship and eligibility checks
+remain pending for this update; no podium or payment is claimed. Offline coverage
+work on other scenarios is not shipped or claimed complete.
