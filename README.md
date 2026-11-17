@@ -1,53 +1,51 @@
-# Little Rook 4K
+# Little Rook 4K v6 candidate
 
 [![make.fun bounty](https://make.fun/badge/tiny-chess-01.svg)](https://make.fun/c/tiny-chess-01)
-[![Rank](https://make.fun/badge/tiny-chess-01/kalt2212/little-rook-4k/rank.svg)](https://make.fun/c/tiny-chess-01#leaderboard)
-[![Reward](https://make.fun/badge/tiny-chess-01/kalt2212/little-rook-4k/reward.svg)](https://make.fun/c/tiny-chess-01#leaderboard)
 
-An original compact hybrid chess engine by kalt2212 (2026), built for
-[make.fun](https://make.fun). MIT licensed; Python standard library only.
-
-Run with Python 3.13 and MAKEFUN_ENV_URL set to the competition environment's HTTP
-base URL without a trailing slash:
+A compact MIT chess engine by kalt2212 (2026), built for make.fun.
+Python standard library only. Run with Python 3.13 and MAKEFUN_ENV_URL set
+to the environment's HTTP base URL without a trailing slash:
 
 ```sh
 python3.13 main.py
 ```
 
 The program POSTs JSON to `/game` and `/move`, advances after completed games,
-and exits on `done`. Requests allow 180 seconds for house thinking.
+and exits on `done`. Requests allow 180 seconds for opponent thinking.
+No runtime model calls, external chess engines or repository data files are used.
 
-Six public practice scenarios have discrete offline-generated move plans. The
-runtime selects an ordinary move index in canonical sorted legal moves using
-opening ID, opponent, colour and move cursor, with opening/history and root index
-guards. CRC32 opening selectors were checked for collisions across all 40 public
-opening IDs. These six plans are not complete coverage of the 640 public scenarios.
+This rebuild starts from accepted public v5 (989df505). The complete original
+v2 fallback retains legal 0x88 move generation, incremental piece-square scores,
+pawn structure, king shelter, mobility, capture/check quiescence, transposition
+bounds, PVS, late move reductions and guarded null-move pruning. Its fixed
+32,000-node budget, move order, rule handling and completed-iteration fallback
+are unchanged. Clocks and randomness never select moves.
 
-For absent or unusable plans, the engine runs its own original v2 chess search:
-complete legal 0x88 move generation, incremental evaluation, passed pawns, king
-shelter, mobility, capture/check quiescence, transposition bounds, PVS, verified
-late move reductions and guarded null-move pruning. The deterministic search uses
-32,000 nodes and completed-iteration fallback. This general fallback remains weak
-against stronger opponents; the six plans do not improve uncovered scenarios. Clocks and randomness never select
-moves. No runtime model calls, external engines or repository data files are used.
+Fresh static-evaluation optimizations use exact pawn-file counts and enemy-rank
+extrema, plus a cache capped at 32,768 entries and cleared on every search pick.
+Weights, signed integer-floor arithmetic, blocked passed-pawn penalties and
+mobility order are preserved. Differential tests compare evaluations and full
+32k search results, node counts and transposition/history/killer tables against
+v5. Local CPU measurements are evidence for those fixtures, not a universal
+speed or strength guarantee.
 
-Stockfish 19 was used ONLY as an offline analysis oracle by the original recorded
-development tools. The public make.fun MIT opponents and unchanged environment
-were used for offline testing and exact-policy plan replay. No Stockfish code,
-existing third-party move book, NNUE weights or oracle binary enters the runtime.
-Input plan histories, canonical indices, source hashes and oracle settings are
-retained in untracked development evidence. Parent-side execution whose agent log
-cannot be exported is disclosed in the accompanying run record.
+Six public practice cases use ordinary move-index plans rebuilt from supplied
+actual move data. The original controller selects by opening ID, opponent,
+colour and cursor, with opening/history, parity and legal-root index guards.
+Other inputs use the full fallback. These plans cover six cases, not all 640;
+the fallback remains weak against stronger opponents. No external engine code,
+third-party book or weights enter the runtime.
 
-The standalone entrypoint is the unchanged output of official `makefun compress`
-from the readable original `hybrid_source_dev.py`. Source, compiler, plans and tests
-are untracked to keep the committed snapshot small; bundle the readable source with
-`--compress-source main.py=hybrid_source_dev.py`. No outer wrapper is added.
+The supplied six paths replay legally to mate in 21, 26, 19, 28, 31 and 34 plies:
+159 total, corresponding to 1041 plies to spare. This session checked data replay
+and a localhost HTTP mock lifecycle, not fresh original-house practice. No new
+public score, podium place or payment is claimed; 1041 does not meet the stated
+1053 podium target. Parent will independently verify the official environment.
 
-The entry fits the 4 KB limit. Its six plans finish in 25, 28, 19, 28, 31 and
-34 plies: 165 total. Parent-run local official Docker practice on these exact
-bytes scored 6 wins, 0 draws, 0 losses, Elo 2112 and 1035 plies to spare;
-exact replay reproduced the state hash. That performance run omitted transcripts.
-Local Node 24 differs from server Node 26. Site authorship and eligibility checks
-remain pending for this update; no podium or payment is claimed. Offline coverage
-work on other scenarios is not shipped or claimed complete.
+`main.py` is the byte-preserved Latin-1 output of official `makefun compress`
+from untracked `engine_source_dev.py`; bundle that source with
+`--compress-source main.py=engine_source_dev.py`. Only main.py, README.md and
+LICENSE are tracked. The genuine published-v5 native export and this full new
+native rollout are the build records. Later mixed-model experiments were unused
+and remain separate and intact. The parent hosted log is unexportable and must
+be disclosed in the run record. Publication and intake checks remain pending.
