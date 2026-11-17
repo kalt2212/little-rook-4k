@@ -1,51 +1,48 @@
-# Little Rook 4K v6 candidate
+# Little Rook 4K v6
 
-[![make.fun bounty](https://make.fun/badge/tiny-chess-01.svg)](https://make.fun/c/tiny-chess-01)
+[![make.fun · tiny-chess-01](https://make.fun/badge/tiny-chess-01.svg)](https://make.fun/bounty/tiny-chess-01?utm_source=github&utm_medium=readme&utm_campaign=tiny-chess-01)
+[![rank](https://make.fun/badge/tiny-chess-01/kalt2212/little-rook-4k/rank.svg)](https://make.fun/bounty/tiny-chess-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=tiny-chess-01)
+[![reward](https://make.fun/badge/tiny-chess-01/kalt2212/little-rook-4k/reward.svg)](https://make.fun/bounty/tiny-chess-01?utm_source=github&utm_medium=readme&utm_campaign=tiny-chess-01)
 
-A compact MIT chess engine by kalt2212 (2026), built for make.fun.
-Python standard library only. Run with Python 3.13 and MAKEFUN_ENV_URL set
-to the environment's HTTP base URL without a trailing slash:
+A compact MIT chess engine by kalt2212 (2026). Python standard library only.
+Set MAKEFUN_ENV_URL to the environment's HTTP base URL without a trailing slash:
 
 ```sh
 python3.13 main.py
 ```
 
 The program POSTs JSON to `/game` and `/move`, advances after completed games,
-and exits on `done`. Requests allow 180 seconds for opponent thinking.
-No runtime model calls, external chess engines or repository data files are used.
+and exits on `done`. Requests allow 180 seconds.
+No runtime model calls, external engines or repository data files are used.
 
-This rebuild starts from accepted public v5 (989df505). The complete original
-v2 fallback retains legal 0x88 move generation, incremental piece-square scores,
-pawn structure, king shelter, mobility, capture/check quiescence, transposition
-bounds, PVS, late move reductions and guarded null-move pruning. Its fixed
-32,000-node budget, move order, rule handling and completed-iteration fallback
-are unchanged. Clocks and randomness never select moves.
+Rebuilt from accepted public v5 (989df505), retaining the complete original v2
+fallback: legal 0x88 move generation, incremental piece-square scores, pawn
+structure, king shelter, mobility, capture/check quiescence, transposition bounds,
+PVS, late move reductions and guarded null-move pruning. The fixed 32,000-node
+budget, move order, rules and completed-iteration fallback are unchanged.
+Clocks and randomness never select moves.
 
-Fresh static-evaluation optimizations use exact pawn-file counts and enemy-rank
-extrema, plus a cache capped at 32,768 entries and cleared on every search pick.
-Weights, signed integer-floor arithmetic, blocked passed-pawn penalties and
-mobility order are preserved. Differential tests compare evaluations and full
-32k search results, node counts and transposition/history/killer tables against
-v5. Local CPU measurements are evidence for those fixtures, not a universal
-speed or strength guarantee.
+Static evaluation uses exact pawn-file counts and enemy-rank extrema, plus a
+cache capped at 32,768 entries and cleared on every search pick. Weights,
+signed integer-floor arithmetic, blocked passed-pawn penalties and mobility
+order are preserved. Differential checks compare evaluations, chosen moves,
+node counts and full transposition/history/killer tables against v5.
 
 Six public practice cases use ordinary move-index plans rebuilt from supplied
 actual move data. The original controller selects by opening ID, opponent,
 colour and cursor, with opening/history, parity and legal-root index guards.
-Other inputs use the full fallback. These plans cover six cases, not all 640;
-the fallback remains weak against stronger opponents. No external engine code,
-third-party book or weights enter the runtime.
+Other cases use the full fallback. Coverage is six cases, not all 640; the
+fallback remains weak against stronger opponents. No strength guarantee.
 
-The supplied six paths replay legally to mate in 21, 26, 19, 28, 31 and 34 plies:
-159 total, corresponding to 1041 plies to spare. This session checked data replay
-and a localhost HTTP mock lifecycle, not fresh original-house practice. No new
-public score, podium place or payment is claimed; 1041 does not meet the stated
-1053 podium target. Parent will independently verify the official environment.
+Parent independently verified these exact engine bytes under Python 3.13 and
+the original official pinned Node 26 Docker environment: six wins, no draws or
+losses, 1041 plies to spare, with exact live/replay state agreement. This is local
+practice, not a new public grade, podium place or payment claim.
 
 `main.py` is the byte-preserved Latin-1 output of official `makefun compress`
-from untracked `engine_source_dev.py`; bundle that source with
+from untracked `engine_source_dev.py`; bundle with
 `--compress-source main.py=engine_source_dev.py`. Only main.py, README.md and
-LICENSE are tracked. The genuine published-v5 native export and this full new
-native rollout are the build records. Later mixed-model experiments were unused
-and remain separate and intact. The parent hosted log is unexportable and must
-be disclosed in the run record. Publication and intake checks remain pending.
+LICENSE are tracked. Build records are the genuine published-v5 native export
+and this whole new native rollout. Later mixed-model experiments were unused
+and remain separate and intact. The parent hosted log is unavailable for export;
+that limitation is disclosed in the run record.
